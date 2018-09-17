@@ -1,0 +1,31 @@
+- name: Create a group
+  become: yes
+  group:
+      name: "{{ technical_group|default('technical') }}"
+      state: present
+      gid: "{{ technical_group_id|default('1161') }}"
+  tags: user
+
+- name: "Create a technical account"
+  become: yes
+  tags: user
+  user:
+      name: "{{ technical_account|default('tech.admin') }}"
+      comment: "Technical account (deployment)"
+      generate_ssh_key: yes
+      ssh_key_bits: 2048
+      ssh_key_file: .ssh/id_rsa
+      shell: /bin/bash
+      password: "{{ technical_password }}"
+      update_password: on_create
+      createhome: yes
+      uid: "{{ technical_account_id|default('1800') }}"
+      groups: ["{{ technical_group|default('technical') }}", 'sudo']
+
+- name: Enable all members of technical group to execute given project file as root
+  become: yes
+  lineinfile:
+      dest: /etc/sudoers
+      line: "%{{ technical_group|default('technical') }} ALL=(root) NOPASSWD: {{ technical_entrypoint|default('/project/make.sh') }}"
+  tags: user
+  when: enable_technical_entrypoint == True

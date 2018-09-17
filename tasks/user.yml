@@ -1,0 +1,59 @@
+
+- name: "Create user {{ user.login }}"
+  become: yes
+  tags: user
+  user:
+      name: "{{ user.login }}"
+      comment: "{{ user.section }}"
+      generate_ssh_key: yes
+      ssh_key_bits: 2048
+      ssh_key_file: .ssh/id_rsa
+      shell: /bin/zsh
+      password: "{{ user.password }}"
+      update_password: on_create
+      createhome: yes
+      uid: "{{ user.uid }}"
+      groups: "{{ technical_group|default('technical') }}"
+
+- name: Disable account if it was disabled in users.yml
+  become: yes
+  shell: "chage -E 2000-05-01 {{ user.login }}"
+  when: user.disabled == "yes" or user.disabled == "1" or user.disabled == True or user.disabled == "true" or user.disabled == 1
+
+- name: Enable account if it was not disabled in users.yml
+  become: yes
+  shell: "chage -E 2200-05-01 {{ user.login }}"
+  when: user.disabled == "no" or user.disabled == "0" or user.disabled == False or user.disabled == "false" or user.disabled == 0
+
+- name: Allow user to use sudo globally (if allowed)
+  become: yes
+  user:
+    name: '{{ user.login }}'
+    groups: sudo
+    append: yes
+  when: user.global_sudo == "yes" or user.global_sudo == "1" or user.global_sudo == True or user.global_sudo == "true" or user.global_sudo == 1
+
+- name: Disallow user to use sudo (if disallowed)
+  become: yes
+  shell: "gpasswd -d {{ user.login }} sudo || true"
+  when: user.global_sudo == "no" or user.global_sudo == "0" or user.global_sudo == False or user.global_sudo == "false" or user.global_sudo == 0
+
+- name: Check if the user has customized zshrc
+  stat: path="/home/{{ user.login }}/.zshrc"
+  register: zshrc_file
+
+- name: Creating a zshrc from template (if the user does not have already modified it)
+  become: yes
+  become_user: "{{ user.login }}"
+  template:
+      src: zshrc
+      dest: "/home/{{ user.login }}/.zshrc"
+  when: zshrc_file.stat.exists == False
+
+- name: Clone oh-my-zsh
+  become: yes
+  become_user: "{{ user.login }}"
+  git:
+      repo: https://github.com/robbyrussell/oh-my-zsh
+      dest: "/home/{{ user.login }}/.oh-my-zsh"
+

@@ -1,0 +1,12 @@
+---
+
+technical_entrypoint: "/project/make.sh"
+enable_technical_entrypoint: true
+
+technical_account: "tech.admin"
+technical_account_id: 1800
+technical_group: "technical"
+technical_group_id: 1161
+
+users:
+    accounts: []

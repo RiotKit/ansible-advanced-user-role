@@ -1,0 +1,7 @@
+
+#
+# Iterate over all users and create/update each account one-by-one
+#
+
+- include: user.yml user={{ item }}
+  with_items: "{{ users.accounts }}"

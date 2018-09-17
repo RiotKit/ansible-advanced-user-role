@@ -1,0 +1,14 @@
+galaxy_info:
+  author: Krzysztof Wesołowski
+  description: Sets the user accounts basing on the easy to understand yaml configuration
+  company: IWA-AIT.org / ZSP (non-profit organization)
+  license: MIT
+  min_ansible_version: 1.2
+
+  galaxy_tags:
+    - users
+    - access
+    - sudo
+    - multiple users
+
+dependencies: []
