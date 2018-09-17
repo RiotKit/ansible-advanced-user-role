@@ -1,5 +1,5 @@
-Role Name
-=========
+Multi-User project
+==================
 
 Multi-user management with focus on a project to which everybody has access via sudo.
 
