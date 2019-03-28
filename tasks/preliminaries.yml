@@ -1,9 +1,6 @@
 - name: Install required packages
   become: yes
   apt:
-      name: "{{ item }}"
+      name: ['sudo', 'acl']
       state: present
-  with_items:
-      - sudo
-      - acl
   tags: user
