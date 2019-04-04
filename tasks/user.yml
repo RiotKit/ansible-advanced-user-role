@@ -18,12 +18,12 @@
 - name: Disable account if it was disabled in users.yml
   become: yes
   shell: "chage -E 01-05-2000 {{ user.login }}"
-  when: user.disabled == "yes" or user.disabled == "1" or user.disabled == True or user.disabled == "true" or user.disabled == 1
+  when: user.disabled|bool
 
 - name: Enable account if it was not disabled in users.yml
   become: yes
   shell: "chage -E 01-05-2200 {{ user.login }}"
-  when: user.disabled == "no" or user.disabled == "0" or user.disabled == False or user.disabled == "false" or user.disabled == 0
+  when: not user.disabled|bool
 
 - name: Allow user to use sudo globally (if allowed)
   become: yes
@@ -31,7 +31,7 @@
     name: '{{ user.login }}'
     groups: sudo
     append: yes
-  when: user.global_sudo == "yes" or user.global_sudo == "1" or user.global_sudo == True or user.global_sudo == "true" or user.global_sudo == 1
+  when: user.global_sudo|bool
 
 - name: Disallow user to use sudo (if disallowed)
   become: yes

@@ -28,4 +28,4 @@
       dest: /etc/sudoers
       line: "%{{ technical_group|default('technical') }} ALL=(root) NOPASSWD: {{ technical_entrypoint|default('/project/make.sh') }}"
   tags: user
-  when: enable_technical_entrypoint == True
+  when: enable_technical_entrypoint|bool
