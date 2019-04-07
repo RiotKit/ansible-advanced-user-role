@@ -8,5 +8,11 @@ technical_account_id: 1800
 technical_group: "technical"
 technical_group_id: 1161
 
+# on some systems the date format is different
+#chage_past_date: 01-05-2000
+#chage_future_date: 01-05-2200
+chage_past_date: 2000-05-01
+chage_future_date: 2050-05-01
+
 users:
     accounts: []
