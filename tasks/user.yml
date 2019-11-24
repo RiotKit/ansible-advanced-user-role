@@ -55,7 +55,7 @@
 
 - name: Configure ZSH
   include: zsh.yaml
-  when: "'zsh' in user_shell"
+  when: "'zsh' in (user.shell | default('/bin/zsh'))"
 
 - name: Configure SSH daemon
   include: ssh-daemon.yaml
