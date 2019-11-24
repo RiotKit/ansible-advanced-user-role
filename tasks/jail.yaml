@@ -1,0 +1,19 @@
+- name: Configure jail for the user
+  become: yes
+  block:
+      - name: Add user to docker group
+        user:
+            name: '{{ user.login }}'
+            groups: 'docker'
+            append: 'yes'
+
+      - name: Create /etc/containerize directory
+        file:
+            path: /etc/containerize
+            state: directory
+
+      - name: Create configuration file for containerize
+        template:
+            src: containerize.sh.j2
+            dest: "/etc/containerize/{{ user.login }}.sh"
+            mode: u+rwx,g+rwx,o+rx

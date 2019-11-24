@@ -3,6 +3,9 @@
 technical_entrypoint: "/project/make.sh"
 enable_technical_entrypoint: true
 
+use_technical_group: true
+use_technical_user: true
+
 technical_account: "tech.admin"
 technical_account_id: 1800
 technical_group: "technical"

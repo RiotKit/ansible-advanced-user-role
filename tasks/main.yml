@@ -1,3 +1,5 @@
 - include: preliminaries.yml
 - include: groups.yml
+  when: use_technical_group
+
 - include: users.yml

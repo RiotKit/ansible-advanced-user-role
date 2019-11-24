@@ -1,14 +1,14 @@
 - name: Create a group
   become: yes
+  when: use_technical_group|bool
   group:
       name: "{{ technical_group|default('technical') }}"
       state: present
       gid: "{{ technical_group_id|default('1161') }}"
-  tags: user
 
 - name: "Create a technical account"
   become: yes
-  tags: user
+  when: use_technical_group|bool and use_technical_user|bool
   user:
       name: "{{ technical_account|default('tech.admin') }}"
       comment: "Technical account (deployment)"
@@ -27,5 +27,4 @@
   lineinfile:
       dest: /etc/sudoers
       line: "%{{ technical_group|default('technical') }} ALL=(root) NOPASSWD: {{ technical_entrypoint|default('/project/make.sh') }}"
-  tags: user
-  when: enable_technical_entrypoint|bool
+  when: enable_technical_entrypoint|bool and use_technical_group|bool and use_technical_user|bool

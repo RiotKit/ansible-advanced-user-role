@@ -1,0 +1,27 @@
+- become: true
+  become_user: "{{ user.login }}"
+  block:
+      - name: Copy private key to the user directory
+        copy:
+            src: "{{ user.ssh_priv_key }}"
+            dest: "{{ user_home }}/.ssh/{{ user.ssh_priv_key | basename }}"
+        when: "'ssh_priv_key' in user and user.ssh_priv_key"
+
+      - name: Copy public key to the user directory
+        copy:
+            src: "{{ user.ssh_pub_key }}"
+            dest: "{{ user_home }}/.ssh/{{ user.ssh_pub_key | basename }}"
+            mode: 0600
+        when: "'ssh_pub_key' in user and user.ssh_pub_key"
+
+      - when: "'ssh_authorized_keys' in user and user.ssh_authorized_keys"
+        block:
+          - name: Added keys to authorized_keys
+            authorized_key:
+                user: "{{ user.login }}"
+                state: present
+                key: "{{ lookup('file', auth_key_path) }}"
+                path: "{{ user_home }}/.ssh/authorized_keys"
+            loop_control:
+                loop_var: auth_key_path
+            with_items: "{{ user.ssh_authorized_keys }}"

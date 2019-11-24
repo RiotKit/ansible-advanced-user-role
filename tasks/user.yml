@@ -1,19 +1,31 @@
 
+- set_fact:
+      user_shell: "{{ user.shell | default('/bin/zsh') }}"
+
+- set_fact:
+      user_home: "{{ user.home | default('/home/' + user.login) }}"
+
 - name: "Create user {{ user.login }}"
   become: yes
-  tags: user
   user:
       name: "{{ user.login }}"
       comment: "{{ user.section }}"
       generate_ssh_key: yes
       ssh_key_bits: 2048
       ssh_key_file: .ssh/id_rsa
-      shell: /bin/zsh
+      shell: "{{ user_shell }}"
       password: "{{ user.password }}"
       update_password: on_create
       createhome: yes
+      home: "{{ user_home }}"
       uid: "{{ user.uid }}"
+
+- name: Add user to technical group
+  when: use_technical_group|bool
+  user:
+      name: '{{ user.login }}'
       groups: "{{ technical_group|default('technical') }}"
+      append: 'yes'
 
 - name: Disable account if it was disabled in users.yml
   become: yes
@@ -38,22 +50,16 @@
   shell: "gpasswd -d {{ user.login }} sudo || true"
   when: user.global_sudo == "no" or user.global_sudo == "0" or user.global_sudo == False or user.global_sudo == "false" or user.global_sudo == 0
 
-- name: Check if the user has customized zshrc
-  stat: path="/home/{{ user.login }}/.zshrc"
-  register: zshrc_file
+- name: Configure user SSH keys
+  include: ssh-keys.yaml
 
-- name: Creating a zshrc from template (if the user does not have already modified it)
-  become: yes
-  become_user: "{{ user.login }}"
-  template:
-      src: zshrc
-      dest: "/home/{{ user.login }}/.zshrc"
-  when: zshrc_file.stat.exists == False
+- name: Configure ZSH
+  include: zsh.yaml
+  when: "'zsh' in user_shell"
 
-- name: Clone oh-my-zsh
-  become: yes
-  become_user: "{{ user.login }}"
-  git:
-      repo: https://github.com/robbyrussell/oh-my-zsh
-      dest: "/home/{{ user.login }}/.oh-my-zsh"
+- name: Configure SSH daemon
+  include: ssh-daemon.yaml
 
+- name: Configure jail if necessary
+  include: jail.yaml
+  when: "'jailed' in user and user.jailed|bool"

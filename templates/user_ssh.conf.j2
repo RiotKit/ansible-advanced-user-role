@@ -1,0 +1,28 @@
+Match User {{ user.login }}
+    Banner none
+    {% if 'jailed' in user and user.jailed|bool %}ForceCommand /etc/containerize/{{ user.login }}.sh{% else %}
+{% endif %}
+    {% if 'ssh_force_command' in user and ('jailed' not in user or not user.jailed|bool)  %}ForceCommand {{ user.ssh_force_command }}{% else %}
+{% endif %}
+    {% if 'tcp_forwarding' in user %}AllowTCPForwarding {% if user.tcp_forwarding|bool %}yes{% else %}no{% endif %}{% else %}
+{% endif %}
+    {% if 'x11_forwarding' in user %}X11Forwarding {% if user.x11_forwarding|bool %}yes{% else %}no{% endif %}{% else %}
+{% endif %}
+    {% if 'allow_password_auth' in user %}PasswordAuthentication {% if user.allow_password_auth|bool %}yes{% else %}no{% endif %}{% else %}
+{% endif %}
+    {% if 'gateway_ports' in user %}GatewayPorts {% if user.gateway_ports|bool %}yes{% else %}no{% endif %}{% else %}
+{% endif %}
+    {% if 'permit_tty' in user %}PermitTTY {% if user.permit_tty|bool %}yes{% else %}no{% endif %}{% else %}
+{% endif %}
+    {% if 'permit_tunnel' in user %}PermitTunnel {% if user.permit_tunnel|bool %}yes{% else %}no{% endif %}{% else %}
+{% endif %}
+    {% if 'allow_agent_forwarding' in user %}AllowAgentForwarding {% if user.allow_agent_forwarding|bool %}yes{% else %}no{% endif %}{% else %}
+{% endif %}
+    {% if 'permit_user_environment' in user %}PermitUserEnvironment {% if user.permit_user_environment|bool %}yes{% else %}no{% endif %}{% else %}
+{% endif %}
+    {% if 'client_alive_interval' in user %}ClientAliveInterval {{ user.client_alive_interval | int }}{% else %}
+{% endif %}
+    {% if 'client_alive_count_max' in user %}ClientAliveCountMax {{ user.client_alive_count_max | int }}{% else %}
+{% endif %}
+    {% if 'disable_sftp' in user and user.disable_sftp|bool %}Subsystem	sftp	/bin/false{% else %}
+{% endif %}

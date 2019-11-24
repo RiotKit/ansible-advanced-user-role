@@ -1,0 +1,20 @@
+#!/bin/sh
+
+containerize()
+{
+    docker run --rm $1 \
+               -v /etc/group:/etc/group:ro \
+               -v /etc/passwd:/etc/passwd:ro \
+               -v $HOME:$HOME \
+               --workdir $HOME \
+               --hostname $(hostname) \
+               -u $(id -u $USER):$(id -g $USER) \
+               {{ user.containerize_image | default('alpine:3.10') }} $SSH_ORIGINAL_COMMAND
+}
+
+# Check if TTY allocated
+if tty -s; then
+    containerize -it
+else
+    containerize -i
+fi
