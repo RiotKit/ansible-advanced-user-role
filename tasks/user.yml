@@ -22,6 +22,7 @@
 
 - name: Add user to technical group
   when: use_technical_group|bool
+  become: yes
   user:
       name: '{{ user.login }}'
       groups: "{{ technical_group|default('technical') }}"
