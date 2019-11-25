@@ -5,6 +5,7 @@
         copy:
             src: "{{ user.ssh_priv_key }}"
             dest: "{{ user_home }}/.ssh/{{ user.ssh_priv_key | basename }}"
+            mode: 0600
         when: "'ssh_priv_key' in user and user.ssh_priv_key"
 
       - name: Copy public key to the user directory
