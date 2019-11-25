@@ -40,6 +40,8 @@ users:
           ssh_priv_key: 'path-to-id'
           ssh_authorized_keys:
               - path_to_key.pub
+          ssh_known_hosts:
+              - "[localhost]:2222 ecdsa-sha2-nistp256 soooomeeekey-here"
           gid: 1161
           uid: 2050
           disabled: no

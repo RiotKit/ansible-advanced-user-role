@@ -26,3 +26,18 @@
             loop_control:
                 loop_var: auth_key_path
             with_items: "{{ user.ssh_authorized_keys }}"
+
+      - when: "'ssh_known_hosts' in user and user.ssh_known_hosts"
+        block:
+            - name: Add host to known_hosts
+              become_user: "{{ user.login }}"
+              become: true
+              lineinfile:
+                  path: "{{ user_home }}/.ssh/known_hosts"
+                  regexp: "^{{ known_host }}"
+                  line: "{{ known_host }}"
+                  create: true
+                  mode: 0600
+              loop_control:
+                  loop_var: known_host
+              with_items: "{{ user.ssh_known_hosts }}"
