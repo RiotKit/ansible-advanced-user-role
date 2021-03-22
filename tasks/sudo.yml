@@ -8,4 +8,4 @@
   become: yes
   lineinfile:
       dest: /etc/sudoers
-      line: "%sudonopasswd ALL=(root) NOPASSWD: ALL"
+      line: "%sudonopasswd ALL=(ALL) NOPASSWD: ALL"
