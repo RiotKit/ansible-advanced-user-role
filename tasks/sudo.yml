@@ -1,0 +1,11 @@
+---
+- name: Create a sudonopasswd group
+  group:
+      name: sudonopasswd
+      state: present
+
+- name: "Add sudoers entry, so all users belonging to group 'sudonopasswd' will access sudo without password"
+  become: yes
+  lineinfile:
+      dest: /etc/sudoers
+      line: "%sudonopasswd ALL=(root) NOPASSWD: ALL"

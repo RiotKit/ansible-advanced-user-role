@@ -5,6 +5,9 @@
 - set_fact:
       user_home: "{{ user.home | default('/home/' + user.login) }}"
 
+- set_fact:
+      sudo_group_name: '{% if "sudo_without_password" in user and user.sudo_without_password|bool %}sudonopasswd{% else %}sudo{% endif %}'
+
 - name: "Create user {{ user.login }}"
   become: yes
   user:
@@ -42,14 +45,14 @@
   become: yes
   user:
     name: '{{ user.login }}'
-    groups: sudo
+    groups: "{{ sudo_group_name }}"
     append: yes
   when: user.global_sudo|bool
 
 - name: Disallow user to use sudo (if disallowed)
   become: yes
-  shell: "gpasswd -d {{ user.login }} sudo || true"
-  when: user.global_sudo == "no" or user.global_sudo == "0" or user.global_sudo == False or user.global_sudo == "false" or user.global_sudo == 0
+  shell: "gpasswd -d {{ user.login }} sudo || true; gpasswd -d {{ user.login }} sudonopasswd || true"
+  when: not user.global_sudo|bool
 
 - name: Configure user SSH keys
   include: ssh-keys.yaml

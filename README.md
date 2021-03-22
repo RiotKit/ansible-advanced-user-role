@@ -36,6 +36,7 @@ users:
           section: "ZSP" # account description / organization name / etc.
           password: 'some-password-hash-generated-by-mkpasswd'
           global_sudo: no
+          sudo_without_password: yes
           ssh_pub_key: 'path-to-id.pub'
           ssh_priv_key: 'path-to-id'
           ssh_authorized_keys:
@@ -49,7 +50,7 @@ users:
 
           # optional jail configuration (defaults: no jail usage)
           jailed: no
-          containerize_image: "alpine:3.10"
+          containerize_image: "alpine:3.12"
 
           # optional SSH configuration per user (defaults: global ssh settings used, nothing overridden if key here is not defined)
           tcp_forwarding: yes
@@ -79,11 +80,6 @@ License
 -------
 
 MIT
-
-Author Information
-------------------
-
-Krzysztof Wesołowski, anarchosyndicalist, backend-devops programmer, grassroot advocate
 
 Made especially for:
 https://iwa-ait.org
